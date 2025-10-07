@@ -1,0 +1,227 @@
+const loginForm = document.getElementById('loginForm');
+const errorMsg = document.getElementById('errorMsg');
+const successMsg = document.getElementById('successMsg');
+
+// Show signup form
+function showSignupForm() {
+    document.querySelector('.login-header h2').textContent = 'Create Account';
+    document.querySelector('.login-header p').textContent = 'Register for a new account';
+
+    loginForm.innerHTML = `
+        <div class="form-group">
+            <label for="signupRole">Account Type</label>
+            <select id="signupRole" required>
+                <option value="">Select Account Type</option>
+                <option value="user">User Account</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="signupName">Full Name</label>
+            <input type="text" id="signupName" placeholder="Enter your full name" required>
+        </div>
+
+        <div class="form-group">
+            <label for="signupEmail">Email</label>
+            <input type="email" id="signupEmail" placeholder="Enter your email" required>
+        </div>
+
+        <div class="form-group">
+            <label for="signupUsername">Username</label>
+            <input type="text" id="signupUsername" placeholder="Choose a username" required>
+        </div>
+
+        <div class="form-group">
+            <label for="signupPassword">Password</label>
+            <input type="password" id="signupPassword" placeholder="Create a password" required>
+        </div>
+
+        <div class="form-group">
+            <label for="signupConfirmPassword">Confirm Password</label>
+            <input type="password" id="signupConfirmPassword" placeholder="Confirm your password" required>
+        </div>
+
+        <button type="submit" class="login-btn">Create Account</button>
+
+        <div style="text-align: center; margin-top: 25px; padding-top: 25px; border-top: 1px solid #e0e0e0;">
+            <p style="color: #666; font-size: 0.95em;">
+                Already have an account? 
+                <a href="#" onclick="showLoginForm(); return false;" style="color: #2d5a3d; font-weight: 600; text-decoration: none;">Login</a>
+            </p>
+        </div>
+    `;
+
+    loginForm.onsubmit = handleSignup;
+    errorMsg.style.display = 'none';
+    successMsg.style.display = 'none';
+}
+
+// Show login form
+function showLoginForm() {
+    document.querySelector('.login-header h2').textContent = 'Login';
+    document.querySelector('.login-header p').textContent = 'Please enter your credentials';
+
+    loginForm.innerHTML = `
+        <div class="form-group">
+            <label for="userRole">Login As</label>
+            <select id="userRole" required>
+                <option value="">Select Role</option>
+                <option value="admin">Administrator</option>
+                <option value="user">User</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" placeholder="Enter your username" required>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="Enter your password" required>
+        </div>
+
+        <button type="submit" class="login-btn">Login</button>
+
+        <div class="forgot-password">
+            <a href="#" onclick="alert('Please contact your administrator'); return false;">Forgot Password?</a>
+        </div>
+
+        <div style="text-align: center; margin-top: 25px; padding-top: 25px; border-top: 1px solid #e0e0e0;">
+            <p style="color: #666; font-size: 0.95em;">
+                Don't have an account? 
+                <a href="#" onclick="showSignupForm(); return false;" style="color: #2d5a3d; font-weight: 600; text-decoration: none;">Create Account</a>
+            </p>
+        </div>
+    `;
+
+    loginForm.onsubmit = handleLogin;
+    errorMsg.style.display = 'none';
+    successMsg.style.display = 'none';
+}
+
+// Handle signup
+async function handleSignup(e) {
+    e.preventDefault();
+
+    const role = document.getElementById('signupRole').value;
+    const name = document.getElementById('signupName').value;
+    const email = document.getElementById('signupEmail').value;
+    const username = document.getElementById('signupUsername').value;
+    const password = document.getElementById('signupPassword').value;
+    const confirmPassword = document.getElementById('signupConfirmPassword').value;
+
+    errorMsg.style.display = 'none';
+    successMsg.style.display = 'none';
+
+    // Validate
+    if (!role) {
+        showError('Please select an account type');
+        return;
+    }
+
+    if (password.length < 6) {
+        showError('Password must be at least 6 characters long');
+        return;
+    }
+
+    if (password !== confirmPassword) {
+        showError('Passwords do not match');
+        return;
+    }
+
+    try {
+        const response = await fetch('register.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                full_name: name,
+                email: email,
+                username: username,
+                password: password,
+                role: role
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            showSuccess(data.message);
+
+            setTimeout(() => {
+                showLoginForm();
+            }, 2000);
+        } else {
+            showError(data.message);
+        }
+    } catch (error) {
+        showError('An error occurred. Please try again.');
+        console.error('Registration error:', error);
+    }
+}
+
+// Handle login
+async function handleLogin(e) {
+    e.preventDefault();
+
+    const role = document.getElementById('userRole').value;
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+
+    errorMsg.style.display = 'none';
+    successMsg.style.display = 'none';
+
+    if (!role) {
+        showError('Please select a role');
+        return;
+    }
+
+    try {
+        const response = await fetch('login.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: username,
+                password: password,
+                role: role
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            showSuccess(data.message);
+
+            setTimeout(() => {
+                window.location.href = data.redirect;
+            }, 1000);
+        } else {
+            showError(data.message);
+        }
+    } catch (error) {
+        showError('An error occurred. Please try again.');
+        console.error('Login error:', error);
+    }
+}
+
+// Set initial form handler
+loginForm.addEventListener('submit', handleLogin);
+
+function showError(message) {
+    errorMsg.textContent = message;
+    errorMsg.style.display = 'block';
+}
+
+function showSuccess(message) {
+    successMsg.textContent = message;
+    successMsg.style.display = 'block';
+}
+
+// Demo credentials info (remove in production)
+console.log('Demo Credentials:');
+console.log('Admin - Username: admin, Password: admin123');
+console.log('User - Username: user, Password: user123');

@@ -1,6 +1,5 @@
 <?php
-require_once 'config/database.php';
-
+require_once 'config.php';
 header('Content-Type: application/json');
 
 // Check if request method is POST

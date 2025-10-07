@@ -24,10 +24,10 @@
             <div class="error-message" id="errorMsg"></div>
             <div class="success-message" id="successMsg"></div>
 
-            <form id="loginForm">
+            <form action="login.php" method="POST" id="loginForm">
                 <div class="form-group">
                     <label for="userRole">Login As</label>
-                    <select id="userRole" required>
+                    <select id="userRole" name="role" required>
                         <option value="">Select Role</option>
                         <option value="admin">Administrator</option>
                         <option value="user">User</option>
