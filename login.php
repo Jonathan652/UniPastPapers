@@ -1,88 +1,114 @@
 <?php
-require_once '../config/config.php';
+require_once 'config.php';
 
+// Set JSON header
 header('Content-Type: application/json');
 
-// Check if request method is POST
+// Check request method
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    echo json_encode([
+    sendJSONResponse([
         'success' => false,
         'message' => 'Invalid request method'
-    ]);
-    exit;
+    ], 405);
 }
 
 // Get JSON input
 $input = json_decode(file_get_contents('php://input'), true);
 
 // Validate input
-if (!isset($input['username']) || !isset($input['password']) || !isset($input['role'])) {
-    echo json_encode([
+if (!isset($input['username']) || !isset($input['password'])) {
+    sendJSONResponse([
         'success' => false,
-        'message' => 'Missing required fields'
-    ]);
-    exit;
+        'message' => 'Username and password are required'
+    ], 400);
 }
 
-$username = $conn->real_escape_string(trim($input['username']));
-$password = trim($input['password']);
-$role = $conn->real_escape_string(trim($input['role']));
+$username = sanitizeInput($input['username']);
+$password = $input['password'];
 
-// Validate role
-if (!in_array($role, ['admin', 'user'])) {
-    echo json_encode([
+// Validate input length
+if (strlen($username) < 3) {
+    sendJSONResponse([
         'success' => false,
-        'message' => 'Invalid role selected'
-    ]);
-    exit;
+        'message' => 'Username must be at least 3 characters long'
+    ], 400);
 }
 
-// Query to find user
-$sql = "SELECT id, full_name, username, email, password, role FROM users WHERE username = ? AND role = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("ss", $username, $role);
-$stmt->execute();
-$result = $stmt->get_result();
+if (strlen($password) < PASSWORD_MIN_LENGTH) {
+    sendJSONResponse([
+        'success' => false,
+        'message' => 'Password must be at least ' . PASSWORD_MIN_LENGTH . ' characters long'
+    ], 400);
+}
 
-if ($result->num_rows === 1) {
-    $user = $result->fetch_assoc();
-    
-    // Verify password
-    if (password_verify($password, $user['password'])) {
-        // Password is correct, create session
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['username'] = $user['username'];
-        $_SESSION['full_name'] = $user['full_name'];
-        $_SESSION['email'] = $user['email'];
-        $_SESSION['role'] = $user['role'];
-        $_SESSION['login_time'] = date('Y-m-d H:i:s');
-        
-        // Determine redirect URL based on role
-        $redirect_url = ($user['role'] === 'admin') ? 'admin-dashboard.php' : 'user-dashboard.php';
-        
-        echo json_encode([
-            'success' => true,
-            'message' => 'Login successful',
-            'redirect' => $redirect_url,
-            'user' => [
-                'username' => $user['username'],
-                'full_name' => $user['full_name'],
-                'role' => $user['role']
-            ]
-        ]);
-    } else {
-        echo json_encode([
+try {
+    // Find user by username
+    $stmt = $conn->prepare("SELECT id, full_name, username, email, password, role, is_active FROM users WHERE username = ?");
+    $stmt->execute([$username]);
+    $user = $stmt->fetch();
+
+    if (!$user) {
+        sendJSONResponse([
             'success' => false,
             'message' => 'Invalid username or password'
-        ]);
+        ], 401);
     }
-} else {
-    echo json_encode([
-        'success' => false,
-        'message' => 'Invalid username or password'
-    ]);
-}
 
-$stmt->close();
-$conn->close();
+    // Check if user is active
+    if (!$user['is_active']) {
+        sendJSONResponse([
+            'success' => false,
+            'message' => 'Account is deactivated. Please contact administrator.'
+        ], 401);
+    }
+
+    // Verify password
+    if (!password_verify($password, $user['password'])) {
+        sendJSONResponse([
+            'success' => false,
+            'message' => 'Invalid username or password'
+        ], 401);
+    }
+
+    // Check if password needs rehashing
+    if (password_needs_rehash($user['password'], PASSWORD_DEFAULT)) {
+        $newHash = password_hash($password, PASSWORD_DEFAULT);
+        $updateStmt = $conn->prepare("UPDATE users SET password = ? WHERE id = ?");
+        $updateStmt->execute([$newHash, $user['id']]);
+    }
+
+    // Create session
+    $_SESSION['user_id'] = $user['id'];
+    $_SESSION['username'] = $user['username'];
+    $_SESSION['full_name'] = $user['full_name'];
+    $_SESSION['email'] = $user['email'];
+    $_SESSION['role'] = $user['role'];
+    $_SESSION['login_time'] = date('Y-m-d H:i:s');
+
+    // Log activity
+    logActivity($user['id'], 'login', 'User logged in successfully');
+
+    // Determine redirect URL
+    $redirectUrl = ($user['role'] === 'admin') ? 'admin-dashboard.html' : 'user-dashboard.html';
+
+    sendJSONResponse([
+        'success' => true,
+        'message' => 'Login successful',
+        'redirect' => $redirectUrl,
+        'user' => [
+            'id' => (int)$user['id'],
+            'username' => $user['username'],
+            'full_name' => $user['full_name'],
+            'email' => $user['email'],
+            'role' => $user['role']
+        ]
+    ]);
+
+} catch (PDOException $e) {
+    error_log("Login error: " . $e->getMessage());
+    sendJSONResponse([
+        'success' => false,
+        'message' => 'Database error occurred'
+    ], 500);
+}
 ?>

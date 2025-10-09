@@ -30,7 +30,7 @@ function requireAdmin() {
     }
     
     if (!isAdmin()) {
-        header('Location: user-dashboard.php');
+        header('Location: user-dashboard.html');
         exit;
     }
 }

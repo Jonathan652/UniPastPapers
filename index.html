@@ -3,292 +3,153 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="Login.css">
-    <title>Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University Past Papers Portal</title>
+    <link rel="stylesheet" href="assets/css/login.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 
 <body>
     <div class="login-container">
         <div class="login-left">
-            <h1>Welcome Back</h1>
-            <p>Access your dashboard by logging in with your credentials. Select your role and enter your information to continue.</p>
+            <div class="logo-section">
+                <div class="logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    <h1>University Past Papers Portal</h1>
+                </div>
+                <p class="subtitle">Access past papers from all faculties, courses, and units</p>
+            </div>
+            <div class="features">
+                <div class="feature">
+                    <i class="fas fa-search"></i>
+                    <span>Browse by Faculty, Course, or Unit</span>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-download"></i>
+                    <span>Download Papers Instantly</span>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-history"></i>
+                    <span>Track Your Download History</span>
+                </div>
+            </div>
         </div>
 
         <div class="login-right">
-            <div class="login-header">
-                <h2>Login</h2>
-                <p>Please enter your credentials</p>
-            </div>
-
-            <div class="error-message" id="errorMsg"></div>
-            <div class="success-message" id="successMsg"></div>
-
-            <form action="login.php" method="POST" id="loginForm">
-                <div class="form-group">
-                    <label for="userRole">Login As</label>
-                    <select id="userRole" name="role" required>
-                        <option value="">Select Role</option>
-                        <option value="admin">Administrator</option>
-                        <option value="user">User</option>
-                    </select>
+            <div class="login-form-container">
+                <div class="form-header">
+                    <h2 id="formTitle">Welcome Back</h2>
+                    <p id="formSubtitle">Sign in to access your dashboard</p>
                 </div>
 
-                <div class="form-group">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" placeholder="Enter your username" required>
+                <div class="alert alert-error" id="errorMsg" style="display: none;"></div>
+                <div class="alert alert-success" id="successMsg" style="display: none;"></div>
+
+                <form id="authForm">
+                    <!-- Login Form -->
+                    <div id="loginForm" class="form-section active">
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <div class="input-group">
+                                <i class="fas fa-user"></i>
+                                <input type="text" id="username" name="username" placeholder="Enter your username" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <div class="input-group">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                                <button type="button" class="toggle-password" onclick="togglePassword('password')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-sign-in-alt"></i>
+                            Sign In
+                        </button>
+
+                        <div class="form-footer">
+                            <p>Don't have an account? <a href="#" onclick="showRegisterForm()">Create Account</a></p>
+                        </div>
+                    </div>
+
+                    <!-- Register Form -->
+                    <div id="registerForm" class="form-section">
+                        <div class="form-group">
+                            <label for="regFullName">Full Name</label>
+                            <div class="input-group">
+                                <i class="fas fa-user"></i>
+                                <input type="text" id="regFullName" name="full_name" placeholder="Enter your full name" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="regEmail">Email</label>
+                            <div class="input-group">
+                                <i class="fas fa-envelope"></i>
+                                <input type="email" id="regEmail" name="email" placeholder="Enter your email" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="regUsername">Username</label>
+                            <div class="input-group">
+                                <i class="fas fa-user"></i>
+                                <input type="text" id="regUsername" name="username" placeholder="Choose a username" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="regPassword">Password</label>
+                            <div class="input-group">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" id="regPassword" name="password" placeholder="Create a password" required>
+                                <button type="button" class="toggle-password" onclick="togglePassword('regPassword')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="regConfirmPassword">Confirm Password</label>
+                            <div class="input-group">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" id="regConfirmPassword" name="confirm_password" placeholder="Confirm your password" required>
+                                <button type="button" class="toggle-password" onclick="togglePassword('regConfirmPassword')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-user-plus"></i>
+                            Create Account
+                        </button>
+
+                        <div class="form-footer">
+                            <p>Already have an account? <a href="#" onclick="showLoginForm()">Sign In</a></p>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="demo-credentials">
+                    <h4>Demo Credentials</h4>
+                    <div class="demo-item">
+                        <strong>Admin:</strong> admin / admin123
+                    </div>
+                    <div class="demo-item">
+                        <strong>User:</strong> student / user123
+                    </div>
                 </div>
-
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" placeholder="Enter your password" required>
-                </div>
-
-                <button type="submit" class="login-btn">Login</button>
-
-                <div class="forgot-password">
-                    <a href="#" onclick="alert('Please contact your administrator'); return false;">Forgot Password?</a>
-                </div>
-            </form>
-
-            <div style="text-align: center; margin-top: 25px; padding-top: 25px; border-top: 1px solid #e0e0e0;">
-                <p style="color: #666; font-size: 0.95em;">
-                    Don't have an account?
-                    <a href="#" onclick="showSignupForm(); return false;" style="color: #667eea; font-weight: 600; text-decoration: none;">Create Account</a>
-                </p>
             </div>
         </div>
     </div>
 
-    <script>
-        const loginForm = document.getElementById('loginForm');
-        const errorMsg = document.getElementById('errorMsg');
-        const successMsg = document.getElementById('successMsg');
-
-        // Show signup form
-        function showSignupForm() {
-            document.querySelector('.login-header h2').textContent = 'Create Account';
-            document.querySelector('.login-header p').textContent = 'Register for a new account';
-
-            loginForm.innerHTML = `
-                <div class="form-group">
-                    <label for="signupRole">Account Type</label>
-                    <select id="signupRole" required>
-                        <option value="">Select Account Type</option>
-                        <option value="user">User Account</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="signupName">Full Name</label>
-                    <input type="text" id="signupName" placeholder="Enter your full name" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="signupEmail">Email</label>
-                    <input type="email" id="signupEmail" placeholder="Enter your email" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="signupUsername">Username</label>
-                    <input type="text" id="signupUsername" placeholder="Choose a username" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="signupPassword">Password</label>
-                    <input type="password" id="signupPassword" placeholder="Create a password" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="signupConfirmPassword">Confirm Password</label>
-                    <input type="password" id="signupConfirmPassword" placeholder="Confirm your password" required>
-                </div>
-
-                <button type="submit" class="login-btn">Create Account</button>
-
-                <div style="text-align: center; margin-top: 25px; padding-top: 25px; border-top: 1px solid #e0e0e0;">
-                    <p style="color: #666; font-size: 0.95em;">
-                        Already have an account? 
-                        <a href="#" onclick="showLoginForm(); return false;" style="color: #667eea; font-weight: 600; text-decoration: none;">Login</a>
-                    </p>
-                </div>
-            `;
-
-            loginForm.onsubmit = handleSignup;
-            errorMsg.style.display = 'none';
-            successMsg.style.display = 'none';
-        }
-
-        // Show login form
-        function showLoginForm() {
-            document.querySelector('.login-header h2').textContent = 'Login';
-            document.querySelector('.login-header p').textContent = 'Please enter your credentials';
-
-            loginForm.innerHTML = `
-                <div class="form-group">
-                    <label for="userRole">Login As</label>
-                    <select id="userRole" required>
-                        <option value="">Select Role</option>
-                        <option value="admin">Administrator</option>
-                        <option value="user">User</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" placeholder="Enter your username" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" placeholder="Enter your password" required>
-                </div>
-
-                <button type="submit" class="login-btn">Login</button>
-
-                <div class="forgot-password">
-                    <a href="#" onclick="alert('Please contact your administrator'); return false;">Forgot Password?</a>
-                </div>
-
-                <div style="text-align: center; margin-top: 25px; padding-top: 25px; border-top: 1px solid #e0e0e0;">
-                    <p style="color: #666; font-size: 0.95em;">
-                        Don't have an account? 
-                        <a href="#" onclick="showSignupForm(); return false;" style="color: #667eea; font-weight: 600; text-decoration: none;">Create Account</a>
-                    </p>
-                </div>
-            `;
-
-            loginForm.onsubmit = handleLogin;
-            errorMsg.style.display = 'none';
-            successMsg.style.display = 'none';
-        }
-
-        // Handle signup
-        async function handleSignup(e) {
-            e.preventDefault();
-
-            const role = document.getElementById('signupRole').value;
-            const name = document.getElementById('signupName').value;
-            const email = document.getElementById('signupEmail').value;
-            const username = document.getElementById('signupUsername').value;
-            const password = document.getElementById('signupPassword').value;
-            const confirmPassword = document.getElementById('signupConfirmPassword').value;
-
-            errorMsg.style.display = 'none';
-            successMsg.style.display = 'none';
-
-            // Validate
-            if (!role) {
-                showError('Please select an account type');
-                return;
-            }
-
-            if (password.length < 6) {
-                showError('Password must be at least 6 characters long');
-                return;
-            }
-
-            if (password !== confirmPassword) {
-                showError('Passwords do not match');
-                return;
-            }
-
-            try {
-                const response = await fetch('register.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        full_name: name,
-                        email: email,
-                        username: username,
-                        password: password,
-                        role: role
-                    })
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    showSuccess(data.message);
-
-                    setTimeout(() => {
-                        showLoginForm();
-                    }, 2000);
-                } else {
-                    showError(data.message);
-                }
-            } catch (error) {
-                showError('An error occurred. Please try again.');
-                console.error('Registration error:', error);
-            }
-        }
-
-        // Handle login
-        async function handleLogin(e) {
-            e.preventDefault();
-
-            const role = document.getElementById('userRole').value;
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-
-            errorMsg.style.display = 'none';
-            successMsg.style.display = 'none';
-
-            if (!role) {
-                showError('Please select a role');
-                return;
-            }
-
-            try {
-                const response = await fetch('login.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        username: username,
-                        password: password,
-                        role: role
-                    })
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    showSuccess(data.message);
-
-                    setTimeout(() => {
-                        window.location.href = data.redirect;
-                    }, 1000);
-                } else {
-                    showError(data.message);
-                }
-            } catch (error) {
-                showError('An error occurred. Please try again.');
-                console.error('Login error:', error);
-            }
-        }
-
-        // Set initial form handler
-        loginForm.addEventListener('submit', handleLogin);
-
-        function showError(message) {
-            errorMsg.textContent = message;
-            errorMsg.style.display = 'block';
-        }
-
-        function showSuccess(message) {
-            successMsg.textContent = message;
-            successMsg.style.display = 'block';
-        }
-
-        // Demo credentials info (remove in production)
-        console.log('Demo Credentials:');
-        console.log('Admin - Username: admin, Password: admin123');
-        console.log('User - Username: user, Password: user123');
-    </script>
+    <script src="assets/js/login.js"></script>
 </body>
 
 </html>

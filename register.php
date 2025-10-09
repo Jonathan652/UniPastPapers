@@ -1,130 +1,134 @@
 <?php
 require_once 'config.php';
+
+// Set JSON header
 header('Content-Type: application/json');
 
-// Check if request method is POST
+// Check request method
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    echo json_encode([
+    sendJSONResponse([
         'success' => false,
         'message' => 'Invalid request method'
-    ]);
-    exit;
+    ], 405);
 }
 
 // Get JSON input
 $input = json_decode(file_get_contents('php://input'), true);
 
-// Validate input
-$required_fields = ['full_name', 'email', 'username', 'password', 'role'];
-foreach ($required_fields as $field) {
+// Validate required fields
+$requiredFields = ['full_name', 'email', 'username', 'password', 'confirm_password'];
+foreach ($requiredFields as $field) {
     if (!isset($input[$field]) || empty(trim($input[$field]))) {
-        echo json_encode([
+        sendJSONResponse([
             'success' => false,
             'message' => 'All fields are required'
-        ]);
-        exit;
+        ], 400);
     }
 }
 
 // Sanitize inputs
-$full_name = $conn->real_escape_string(trim($input['full_name']));
-$email = $conn->real_escape_string(trim($input['email']));
-$username = $conn->real_escape_string(trim($input['username']));
-$password = trim($input['password']);
-$role = $conn->real_escape_string(trim($input['role']));
+$fullName = sanitizeInput($input['full_name']);
+$email = sanitizeInput($input['email']);
+$username = sanitizeInput($input['username']);
+$password = $input['password'];
+$confirmPassword = $input['confirm_password'];
 
 // Validate email format
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    echo json_encode([
+    sendJSONResponse([
         'success' => false,
         'message' => 'Invalid email format'
-    ]);
-    exit;
+    ], 400);
 }
 
-// Validate password length
-if (strlen($password) < 6) {
-    echo json_encode([
+// Validate password
+if (strlen($password) < PASSWORD_MIN_LENGTH) {
+    sendJSONResponse([
         'success' => false,
-        'message' => 'Password must be at least 6 characters long'
-    ]);
-    exit;
+        'message' => 'Password must be at least ' . PASSWORD_MIN_LENGTH . ' characters long'
+    ], 400);
 }
 
-// Validate username length
+if ($password !== $confirmPassword) {
+    sendJSONResponse([
+        'success' => false,
+        'message' => 'Passwords do not match'
+    ], 400);
+}
+
+// Validate username
 if (strlen($username) < 3) {
-    echo json_encode([
+    sendJSONResponse([
         'success' => false,
         'message' => 'Username must be at least 3 characters long'
-    ]);
-    exit;
+    ], 400);
 }
 
-// Validate role (only allow 'user' role for registration)
-if ($role !== 'user') {
-    echo json_encode([
+if (!preg_match('/^[a-zA-Z0-9_]+$/', $username)) {
+    sendJSONResponse([
         'success' => false,
-        'message' => 'Invalid account type'
-    ]);
-    exit;
+        'message' => 'Username can only contain letters, numbers, and underscores'
+    ], 400);
 }
 
-// Check if username already exists
-$check_username = "SELECT id FROM users WHERE username = ?";
-$stmt = $conn->prepare($check_username);
-$stmt->bind_param("s", $username);
-$stmt->execute();
-$result = $stmt->get_result();
-
-if ($result->num_rows > 0) {
-    echo json_encode([
+// Validate full name
+if (strlen($fullName) < 2) {
+    sendJSONResponse([
         'success' => false,
-        'message' => 'Username already exists'
-    ]);
-    $stmt->close();
-    $conn->close();
-    exit;
+        'message' => 'Full name must be at least 2 characters long'
+    ], 400);
 }
-$stmt->close();
 
-// Check if email already exists
-$check_email = "SELECT id FROM users WHERE email = ?";
-$stmt = $conn->prepare($check_email);
-$stmt->bind_param("s", $email);
-$stmt->execute();
-$result = $stmt->get_result();
+try {
+    // Check if username already exists
+    $stmt = $conn->prepare("SELECT id FROM users WHERE username = ?");
+    $stmt->execute([$username]);
+    if ($stmt->fetch()) {
+        sendJSONResponse([
+            'success' => false,
+            'message' => 'Username already exists'
+        ], 400);
+    }
 
-if ($result->num_rows > 0) {
-    echo json_encode([
+    // Check if email already exists
+    $stmt = $conn->prepare("SELECT id FROM users WHERE email = ?");
+    $stmt->execute([$email]);
+    if ($stmt->fetch()) {
+        sendJSONResponse([
+            'success' => false,
+            'message' => 'Email already exists'
+        ], 400);
+    }
+
+    // Hash password
+    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+    // Insert new user
+    $stmt = $conn->prepare("INSERT INTO users (full_name, email, username, password, role) VALUES (?, ?, ?, ?, 'user')");
+    $result = $stmt->execute([$fullName, $email, $username, $hashedPassword]);
+
+    if ($result) {
+        $userId = $conn->lastInsertId();
+        
+        // Log activity
+        logActivity($userId, 'register', 'New user registered');
+        
+        sendJSONResponse([
+            'success' => true,
+            'message' => 'Account created successfully! You can now login.'
+        ]);
+    } else {
+        sendJSONResponse([
+            'success' => false,
+            'message' => 'Registration failed. Please try again.'
+        ], 500);
+    }
+
+} catch (PDOException $e) {
+    error_log("Registration error: " . $e->getMessage());
+    sendJSONResponse([
         'success' => false,
-        'message' => 'Email already exists'
-    ]);
-    $stmt->close();
-    $conn->close();
-    exit;
+        'message' => 'Database error occurred'
+    ], 500);
 }
-$stmt->close();
-
-// Hash password
-$hashed_password = password_hash($password, PASSWORD_DEFAULT);
-
-// Insert new user
-$insert_sql = "INSERT INTO users (full_name, email, username, password, role) VALUES (?, ?, ?, ?, ?)";
-$stmt = $conn->prepare($insert_sql);
-$stmt->bind_param("sssss", $full_name, $email, $username, $hashed_password, $role);
-
-if ($stmt->execute()) {
-    echo json_encode([
-        'success' => true,
-        'message' => 'Account created successfully! You can now login.'
-    ]);
-} else {
-    echo json_encode([
-        'success' => false,
-        'message' => 'Registration failed. Please try again.'
-    ]);
-}
-
-$stmt->close();
-$conn->close();
 ?>

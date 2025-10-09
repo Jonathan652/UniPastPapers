@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - University Past Papers Portal</title>
+    <link rel="stylesheet" href="assets/css/admin-dashboard.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-cogs"></i>
+                    <span>Admin Panel</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-link active" data-page="overview">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Overview</span>
+                </a>
+                <a href="#" class="nav-link" data-page="faculties">
+                    <i class="fas fa-university"></i>
+                    <span>Faculties</span>
+                </a>
+                <a href="#" class="nav-link" data-page="courses">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>Courses</span>
+                </a>
+                <a href="#" class="nav-link" data-page="units">
+                    <i class="fas fa-book"></i>
+                    <span>Units</span>
+                </a>
+                <a href="#" class="nav-link" data-page="papers">
+                    <i class="fas fa-file-pdf"></i>
+                    <span>Papers</span>
+                </a>
+                <a href="#" class="nav-link" data-page="users">
+                    <i class="fas fa-users"></i>
+                    <span>Users</span>
+                </a>
+                <a href="#" class="nav-link" data-page="uploads">
+                    <i class="fas fa-upload"></i>
+                    <span>Upload Papers</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="logout-btn" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="topbar">
+                <div class="topbar-left">
+                    <h1 id="pageTitle">Dashboard Overview</h1>
+                    <p id="pageSubtitle">Manage the university past papers portal</p>
+                </div>
+                <div class="topbar-right">
+                    <div class="user-info">
+                        <div class="user-avatar" id="userAvatar">A</div>
+                        <div class="user-details">
+                            <span class="user-name" id="userName">Loading...</span>
+                            <span class="user-role">Administrator</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Overview Page -->
+            <div id="overview" class="page active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-university"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="totalFaculties">0</h3>
+                            <p>Faculties</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="totalCourses">0</h3>
+                            <p>Courses</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="totalUnits">0</h3>
+                            <p>Units</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="totalPapers">0</h3>
+                            <p>Papers</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="totalUsers">0</h3>
+                            <p>Users</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-download"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="totalDownloads">0</h3>
+                            <p>Downloads</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="recent-activity">
+                    <h3>Recent Activity</h3>
+                    <div id="recentActivity" class="activity-list">
+                        <div class="loading-state">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <p>Loading activity...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Faculties Page -->
+            <div id="faculties" class="page">
+                <div class="page-header">
+                    <h2>Manage Faculties</h2>
+                    <button class="btn btn-primary" id="addFacultyBtn">
+                        <i class="fas fa-plus"></i>
+                        Add Faculty
+                    </button>
+                </div>
+
+                <div class="content-card">
+                    <div id="facultiesTable" class="data-table">
+                        <div class="loading-state">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <p>Loading faculties...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Courses Page -->
+            <div id="courses" class="page">
+                <div class="page-header">
+                    <h2>Manage Courses</h2>
+                    <button class="btn btn-primary" id="addCourseBtn">
+                        <i class="fas fa-plus"></i>
+                        Add Course
+                    </button>
+                </div>
+
+                <div class="content-card">
+                    <div id="coursesTable" class="data-table">
+                        <div class="loading-state">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <p>Loading courses...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Units Page -->
+            <div id="units" class="page">
+                <div class="page-header">
+                    <h2>Manage Units</h2>
+                    <button class="btn btn-primary" id="addUnitBtn">
+                        <i class="fas fa-plus"></i>
+                        Add Unit
+                    </button>
+                </div>
+
+                <div class="content-card">
+                    <div id="unitsTable" class="data-table">
+                        <div class="loading-state">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <p>Loading units...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Papers Page -->
+            <div id="papers" class="page">
+                <div class="page-header">
+                    <h2>Manage Papers</h2>
+                    <div class="header-actions">
+                        <button class="btn btn-secondary" id="refreshPapersBtn">
+                            <i class="fas fa-sync"></i>
+                            Refresh
+                        </button>
+                    </div>
+                </div>
+
+                <div class="content-card">
+                    <div id="papersTable" class="data-table">
+                        <div class="loading-state">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <p>Loading papers...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Users Page -->
+            <div id="users" class="page">
+                <div class="page-header">
+                    <h2>Manage Users</h2>
+                    <div class="header-actions">
+                        <button class="btn btn-secondary" id="refreshUsersBtn">
+                            <i class="fas fa-sync"></i>
+                            Refresh
+                        </button>
+                    </div>
+                </div>
+
+                <div class="content-card">
+                    <div id="usersTable" class="data-table">
+                        <div class="loading-state">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <p>Loading users...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upload Papers Page -->
+            <div id="uploads" class="page">
+                <div class="page-header">
+                    <h2>Upload Papers</h2>
+                    <p>Upload new past papers to the system</p>
+                </div>
+
+                <div class="content-card">
+                    <form id="uploadForm" enctype="multipart/form-data">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="uploadUnit">Course Unit *</label>
+                                <select id="uploadUnit" name="unit_id" required>
+                                    <option value="">Select Unit</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="uploadTitle">Paper Title *</label>
+                                <input type="text" id="uploadTitle" name="title" placeholder="Enter paper title" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="uploadYear">Year *</label>
+                                <input type="number" id="uploadYear" name="year" placeholder="e.g., 2023" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="uploadSemester">Semester *</label>
+                                <select id="uploadSemester" name="semester" required>
+                                    <option value="">Select Semester</option>
+                                    <option value="1">Semester 1</option>
+                                    <option value="2">Semester 2</option>
+                                    <option value="3">Semester 3</option>
+                                    <option value="recess">Recess</option>
+                                    <option value="supplementary">Supplementary</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group full-width">
+                                <label for="uploadFile">Paper File (PDF) *</label>
+                                <div class="file-upload">
+                                    <input type="file" id="uploadFile" name="file" accept=".pdf" required>
+                                    <div class="file-upload-display">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                        <span>Choose PDF file or drag and drop</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-upload"></i>
+                                Upload Paper
+                            </button>
+                            <button type="reset" class="btn btn-secondary">
+                                <i class="fas fa-times"></i>
+                                Clear Form
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="facultyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="facultyModalTitle">Add Faculty</h3>
+                <button class="modal-close" id="facultyModalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="facultyForm">
+                    <div class="form-group">
+                        <label for="facultyName">Faculty Name *</label>
+                        <input type="text" id="facultyName" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="facultyCode">Faculty Code *</label>
+                        <input type="text" id="facultyCode" name="code" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="facultyDescription">Description</label>
+                        <textarea id="facultyDescription" name="description" rows="3"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Save Faculty</button>
+                        <button type="button" class="btn btn-secondary" id="facultyCancel">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="courseModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="courseModalTitle">Add Course</h3>
+                <button class="modal-close" id="courseModalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="courseForm">
+                    <div class="form-group">
+                        <label for="courseFaculty">Faculty *</label>
+                        <select id="courseFaculty" name="faculty_id" required>
+                            <option value="">Select Faculty</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="courseName">Course Name *</label>
+                        <input type="text" id="courseName" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="courseCode">Course Code *</label>
+                        <input type="text" id="courseCode" name="code" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="courseDescription">Description</label>
+                        <textarea id="courseDescription" name="description" rows="3"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Save Course</button>
+                        <button type="button" class="btn btn-secondary" id="courseCancel">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="unitModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="unitModalTitle">Add Unit</h3>
+                <button class="modal-close" id="unitModalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="unitForm">
+                    <div class="form-group">
+                        <label for="unitCourse">Course *</label>
+                        <select id="unitCourse" name="course_id" required>
+                            <option value="">Select Course</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="unitName">Unit Name *</label>
+                        <input type="text" id="unitName" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="unitCode">Unit Code *</label>
+                        <input type="text" id="unitCode" name="code" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="unitDescription">Description</label>
+                        <textarea id="unitDescription" name="description" rows="3"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Save Unit</button>
+                        <button type="button" class="btn btn-secondary" id="unitCancel">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/admin-dashboard.js"></script>
+</body>
+
+</html>

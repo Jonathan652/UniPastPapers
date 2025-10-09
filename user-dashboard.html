@@ -4,84 +4,243 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Portal</title>
-    <link rel="stylesheet" href="user-dashboard.css">
+    <title>Student Dashboard - University Past Papers Portal</title>
+    <link rel="stylesheet" href="assets/css/user-dashboard.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 
 <body>
-    <div class="container">
+    <div class="dashboard-container">
+        <!-- Sidebar -->
         <aside class="sidebar">
-            <div class="logo">
-                <h2>📚 Past Papers</h2>
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>Past Papers</span>
+                </div>
             </div>
-            <nav>
-                <a href="#" class="nav-link active" data-page="browse">Browse Papers</a>
-                <a href="#" class="nav-link" data-page="downloads">My Downloads</a>
-                <a href="#" class="nav-link" data-page="profile">Profile</a>
+
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-link active" data-page="browse">
+                    <i class="fas fa-search"></i>
+                    <span>Browse Papers</span>
+                </a>
+                <a href="#" class="nav-link" data-page="downloads">
+                    <i class="fas fa-download"></i>
+                    <span>My Downloads</span>
+                </a>
+                <a href="#" class="nav-link" data-page="profile">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
             </nav>
-            <button class="logout-btn" id="logoutBtn">Logout</button>
+
+            <div class="sidebar-footer">
+                <button class="logout-btn" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
         </aside>
 
+        <!-- Main Content -->
         <main class="main-content">
+            <!-- Header -->
             <header class="topbar">
-                <h1 id="pageTitle">Browse Past Papers</h1>
-                <div class="user-info">
-                    <span id="userName">Loading...</span>
-                    <div class="avatar" id="userAvatar">U</div>
+                <div class="topbar-left">
+                    <h1 id="pageTitle">Browse Past Papers</h1>
+                    <p id="pageSubtitle">Find and download past papers by faculty, course, or unit</p>
+                </div>
+                <div class="topbar-right">
+                    <div class="user-info">
+                        <div class="user-avatar" id="userAvatar">U</div>
+                        <div class="user-details">
+                            <span class="user-name" id="userName">Loading...</span>
+                            <span class="user-role">Student</span>
+                        </div>
+                    </div>
                 </div>
             </header>
 
             <!-- Browse Papers Page -->
             <div id="browse" class="page active">
-                <div class="filters">
-                    <select id="facultyFilter">
-                        <option value="">All Faculties</option>
-                    </select>
-                    <select id="courseFilter">
-                        <option value="">All Courses</option>
-                    </select>
-                    <select id="unitFilter">
-                        <option value="">All Units</option>
-                    </select>
-                    <select id="yearFilter">
-                        <option value="">All Years</option>
-                    </select>
+                <div class="filters-section">
+                    <div class="filters-header">
+                        <h3>Filter Papers</h3>
+                        <button class="clear-filters-btn" id="clearFilters">
+                            <i class="fas fa-times"></i>
+                            Clear All
+                        </button>
+                    </div>
+
+                    <div class="filters-grid">
+                        <div class="filter-group">
+                            <label for="facultyFilter">Faculty</label>
+                            <select id="facultyFilter" class="filter-select">
+                                <option value="">All Faculties</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label for="courseFilter">Course</label>
+                            <select id="courseFilter" class="filter-select">
+                                <option value="">All Courses</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label for="unitFilter">Unit</label>
+                            <select id="unitFilter" class="filter-select">
+                                <option value="">All Units</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label for="yearFilter">Year</label>
+                            <select id="yearFilter" class="filter-select">
+                                <option value="">All Years</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label for="semesterFilter">Semester</label>
+                            <select id="semesterFilter" class="filter-select">
+                                <option value="">All Semesters</option>
+                                <option value="1">Semester 1</option>
+                                <option value="2">Semester 2</option>
+                                <option value="3">Semester 3</option>
+                                <option value="recess">Recess</option>
+                                <option value="supplementary">Supplementary</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
-                <div id="papersGrid" class="papers-grid"></div>
+
+                <div class="papers-section">
+                    <div class="papers-header">
+                        <h3>Available Papers</h3>
+                        <div class="papers-stats">
+                            <span id="papersCount">0 papers found</span>
+                        </div>
+                    </div>
+
+                    <div id="papersGrid" class="papers-grid">
+                        <div class="loading-state">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <p>Loading papers...</p>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Downloads Page -->
             <div id="downloads" class="page">
-                <h2>Download History</h2>
-                <div id="downloadsTable"></div>
+                <div class="page-header">
+                    <h2>Download History</h2>
+                    <p>Track all your downloaded papers</p>
+                </div>
+
+                <div class="downloads-content">
+                    <div id="downloadsTable" class="downloads-table">
+                        <div class="loading-state">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <p>Loading download history...</p>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Profile Page -->
             <div id="profile" class="page">
-                <h2>My Profile</h2>
-                <div class="profile-card">
-                    <div class="profile-field">
-                        <label>Full Name:</label>
-                        <span id="profileName"></span>
+                <div class="page-header">
+                    <h2>My Profile</h2>
+                    <p>Manage your account information</p>
+                </div>
+
+                <div class="profile-content">
+                    <div class="profile-card">
+                        <div class="profile-avatar">
+                            <div class="avatar-large" id="profileAvatar">U</div>
+                        </div>
+
+                        <div class="profile-info">
+                            <div class="profile-field">
+                                <label>Full Name</label>
+                                <span id="profileName">Loading...</span>
+                            </div>
+                            <div class="profile-field">
+                                <label>Email</label>
+                                <span id="profileEmail">Loading...</span>
+                            </div>
+                            <div class="profile-field">
+                                <label>Username</label>
+                                <span id="profileUsername">Loading...</span>
+                            </div>
+                            <div class="profile-field">
+                                <label>Member Since</label>
+                                <span id="profileJoinDate">Loading...</span>
+                            </div>
+                            <div class="profile-field">
+                                <label>Total Downloads</label>
+                                <span id="profileDownloads">0</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="profile-field">
-                        <label>Email:</label>
-                        <span id="profileEmail"></span>
-                    </div>
-                    <div class="profile-field">
-                        <label>Username:</label>
-                        <span id="profileUsername"></span>
-                    </div>
-                    <div class="profile-field">
-                        <label>Total Downloads:</label>
-                        <span id="profileDownloads"></span>
+
+                    <div class="profile-stats">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-download"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h4 id="totalDownloads">0</h4>
+                                <p>Total Downloads</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-file-pdf"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h4 id="uniquePapers">0</h4>
+                                <p>Unique Papers</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-calendar"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h4 id="lastDownload">Never</h4>
+                                <p>Last Download</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </main>
     </div>
 
-    <script src="user-dashboard.js"></script>
+    <!-- Paper Modal -->
+    <div id="paperModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Paper Details</h3>
+                <button class="modal-close" id="modalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="modalContent">
+                    <!-- Content will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/user-dashboard.js"></script>
 </body>
 
 </html>
