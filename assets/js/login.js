@@ -18,6 +18,14 @@ document.addEventListener('DOMContentLoaded', function() {
         formTitle.textContent = 'Create Account';
         formSubtitle.textContent = 'Join the university past papers portal';
         hideMessages();
+
+        // Disable required on login fields
+        loginForm.querySelectorAll('input').forEach(input => {
+            input.required = false;
+        });
+        registerForm.querySelectorAll('input').forEach(input => {
+            input.required = true;
+        });
     };
 
     // Show login form
@@ -27,6 +35,14 @@ document.addEventListener('DOMContentLoaded', function() {
         formTitle.textContent = 'Welcome Back';
         formSubtitle.textContent = 'Sign in to access your dashboard';
         hideMessages();
+
+        // Disable required on register fields
+        registerForm.querySelectorAll('input').forEach(input => {
+            input.required = false;
+        });
+        loginForm.querySelectorAll('input').forEach(input => {
+            input.required = true;
+        });
     };
 
     // Handle form submission
@@ -47,10 +63,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Handle login
     async function handleLogin(formData) {
+
         const username = formData.get('username');
         const password = formData.get('password');
+        const role = formData.get('role');
 
-        if (!username || !password) {
+        console.log('Login attempt:', { username, password, role });
+
+        if (!username || !password || !role) {
             showError('Please fill in all fields');
             return;
         }
@@ -65,11 +85,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 body: JSON.stringify({
                     username: username,
-                    password: password
+                    password: password,
+                    role: role
                 })
             });
 
             const data = await response.json();
+            console.log('Login response:', data);
             showLoading(false);
 
             if (data.success) {
@@ -96,12 +118,15 @@ document.addEventListener('DOMContentLoaded', function() {
     async function handleRegister(formData) {
         const fullName = formData.get('full_name');
         const email = formData.get('email');
-        const username = formData.get('username');
-        const password = formData.get('password');
-        const confirmPassword = formData.get('confirm_password');
+        const username = formData.get('reg_username');
+        const password = formData.get('reg_password');
+        const confirmPassword = formData.get('reg_confirm_password');
+        const role = formData.get('role');
+
+        console.log('Register attempt:', { fullName, email, username, password, confirmPassword, role });
 
         // Client-side validation
-        if (!fullName || !email || !username || !password || !confirmPassword) {
+        if (!fullName || !email || !username || !password || !confirmPassword || !role) {
             showError('Please fill in all fields');
             return;
         }
@@ -139,11 +164,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     email: email,
                     username: username,
                     password: password,
-                    confirm_password: confirmPassword
+                    confirm_password: confirmPassword,
+                    role: role
                 })
             });
 
             const data = await response.json();
+            console.log('Register response:', data);
             showLoading(false);
 
             if (data.success) {
@@ -221,6 +248,26 @@ document.addEventListener('DOMContentLoaded', function() {
             validateField(this);
         });
     });
+
+    // Re-validate confirm password when password field changes
+    const regPasswordInput = document.getElementById('regPassword');
+    const regConfirmPasswordInput = document.getElementById('regConfirmPassword');
+    if (regPasswordInput && regConfirmPasswordInput) {
+        regPasswordInput.addEventListener('input', function() {
+            validateField(regConfirmPasswordInput);
+        });
+    }
+
+    // Ensure login form is active on page load if neither form is active
+    if (!loginForm.classList.contains('active') && !registerForm.classList.contains('active')) {
+        loginForm.classList.add('active');
+        loginForm.querySelectorAll('input').forEach(input => {
+            input.required = true;
+        });
+        registerForm.querySelectorAll('input').forEach(input => {
+            input.required = false;
+        });
+    }
 
     function validateField(field) {
         const value = field.value.trim();

@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $input = json_decode(file_get_contents('php://input'), true);
 
 // Validate required fields
-$requiredFields = ['full_name', 'email', 'username', 'password', 'confirm_password'];
+$requiredFields = ['full_name', 'email', 'username', 'password', 'confirm_password', 'role'];
 foreach ($requiredFields as $field) {
     if (!isset($input[$field]) || empty(trim($input[$field]))) {
         sendJSONResponse([
@@ -32,6 +32,7 @@ $email = sanitizeInput($input['email']);
 $username = sanitizeInput($input['username']);
 $password = $input['password'];
 $confirmPassword = $input['confirm_password'];
+$role = ($input['role'] === 'admin') ? 'admin' : 'user';
 
 // Validate email format
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -104,8 +105,8 @@ try {
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
     // Insert new user
-    $stmt = $conn->prepare("INSERT INTO users (full_name, email, username, password, role) VALUES (?, ?, ?, ?, 'user')");
-    $result = $stmt->execute([$fullName, $email, $username, $hashedPassword]);
+    $stmt = $conn->prepare("INSERT INTO users (full_name, email, username, password, role) VALUES (?, ?, ?, ?, ?)");
+    $result = $stmt->execute([$fullName, $email, $username, $hashedPassword, $role]);
 
     if ($result) {
         $userId = $conn->lastInsertId();

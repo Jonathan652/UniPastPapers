@@ -16,15 +16,17 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $input = json_decode(file_get_contents('php://input'), true);
 
 // Validate input
-if (!isset($input['username']) || !isset($input['password'])) {
+
+if (!isset($input['username']) || !isset($input['password']) || !isset($input['role'])) {
     sendJSONResponse([
         'success' => false,
-        'message' => 'Username and password are required'
+        'message' => 'Username, password, and role are required'
     ], 400);
 }
 
 $username = sanitizeInput($input['username']);
 $password = $input['password'];
+$selectedRole = $input['role'];
 
 // Validate input length
 if (strlen($username) < 3) {
@@ -42,6 +44,7 @@ if (strlen($password) < PASSWORD_MIN_LENGTH) {
 }
 
 try {
+
     // Find user by username
     $stmt = $conn->prepare("SELECT id, full_name, username, email, password, role, is_active FROM users WHERE username = ?");
     $stmt->execute([$username]);
@@ -51,6 +54,14 @@ try {
         sendJSONResponse([
             'success' => false,
             'message' => 'Invalid username or password'
+        ], 401);
+    }
+
+    // Check if role matches
+    if ($user['role'] !== $selectedRole) {
+        sendJSONResponse([
+            'success' => false,
+            'message' => 'Selected role does not match account type.'
         ], 401);
     }
 
@@ -89,7 +100,7 @@ try {
     logActivity($user['id'], 'login', 'User logged in successfully');
 
     // Determine redirect URL
-    $redirectUrl = ($user['role'] === 'admin') ? 'admin-dashboard.html' : 'user-dashboard.html';
+    $redirectUrl = ($selectedRole === 'admin') ? 'admin-dashboard.html' : 'user-dashboard.html';
 
     sendJSONResponse([
         'success' => true,
