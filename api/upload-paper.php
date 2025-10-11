@@ -39,6 +39,14 @@ $unitId = (int)$_POST['unit_id'];
 $title = sanitizeInput($_POST['title']);
 $year = (int)$_POST['year'];
 $semester = sanitizeInput($_POST['semester']);
+// Check if user is logged in
+if (!isset($_SESSION['user_id'])) {
+    sendJSONResponse([
+        'success' => false,
+        'message' => 'User not authenticated'
+    ], 401);
+}
+
 $uploadedBy = $_SESSION['user_id'];
 
 $file = $_FILES['file'];
@@ -98,7 +106,17 @@ try {
     // Create upload directory if it doesn't exist
     $uploadDir = UPLOAD_DIR;
     if (!file_exists($uploadDir)) {
-        mkdir($uploadDir, 0755, true);
+        $dirCreated = mkdir($uploadDir, 0755, true);
+        error_log("Upload directory creation: " . ($dirCreated ? 'SUCCESS' : 'FAILED') . " for path: " . $uploadDir);
+    }
+    
+    // Check if directory is writable
+    if (!is_writable($uploadDir)) {
+        error_log("Upload directory is not writable: " . $uploadDir);
+        sendJSONResponse([
+            'success' => false,
+            'message' => 'Upload directory is not writable'
+        ], 500);
     }
 
     // Generate unique filename
@@ -107,7 +125,9 @@ try {
     $filePath = $uploadDir . $uniqueFileName;
 
     // Move uploaded file
+    error_log("Attempting to move file from: " . $fileTmp . " to: " . $filePath);
     if (move_uploaded_file($fileTmp, $filePath)) {
+        error_log("File moved successfully to: " . $filePath);
         // Insert paper record
         $stmt = $conn->prepare("INSERT INTO past_papers (course_unit_id, title, year, semester, file_name, file_path, file_size, uploaded_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
         $result = $stmt->execute([$unitId, $title, $year, $semester, $fileName, $filePath, $fileSize, $uploadedBy]);
@@ -132,9 +152,10 @@ try {
             ], 500);
         }
     } else {
+        error_log("File move failed from: " . $fileTmp . " to: " . $filePath);
         sendJSONResponse([
             'success' => false,
-            'message' => 'File upload failed'
+            'message' => 'File upload failed - could not move file to upload directory'
         ], 500);
     }
 
