@@ -1,5 +1,13 @@
 <?php
+// Enable error reporting for debugging
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 require_once '../config.php';
+
+// Debug session user_id
+error_log('Session user_id: ' . (isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 'not set'));
 
 // Set JSON header
 header('Content-Type: application/json');
@@ -75,6 +83,8 @@ if (!in_array($semester, $validSemesters)) {
 }
 
 try {
+    error_log('Upload debug: unitId=' . $unitId . ', title=' . $title . ', year=' . $year . ', semester=' . $semester . ', uploadedBy=' . $uploadedBy);
+    error_log('Upload debug: fileName=' . $fileName . ', fileSize=' . $fileSize . ', fileType=' . $fileType . ', fileTmp=' . $fileTmp);
     // Check if unit exists
     $stmt = $conn->prepare("SELECT id FROM course_units WHERE id = ? AND is_active = 1");
     $stmt->execute([$unitId]);
