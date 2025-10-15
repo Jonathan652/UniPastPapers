@@ -28,8 +28,13 @@ class UserDashboard {
         // Setup filters
         this.setupFilters();
 
+        // Pre-populate filter dropdowns
+        this.populateYearOptions();
+
         // Load initial data
         await this.loadFaculties();
+        await this.loadCourses(); // load all courses initially
+        await this.loadUnits(); // load all units initially
         await this.loadPapers();
 
         // Setup logout
@@ -188,11 +193,16 @@ class UserDashboard {
 
     async loadCourses(facultyId) {
         try {
-            const response = await fetch(`api/get-courses.php?faculty_id=${facultyId}`);
+            const url = (facultyId && facultyId !== '') ? `api/get-courses.php?faculty_id=${facultyId}` : 'api/get-courses.php';
+            const response = await fetch(url);
             const data = await response.json();
 
             if (data.success) {
                 const select = document.getElementById('courseFilter');
+                // If loading all courses on init, keep existing "All Courses"
+                if (!facultyId) {
+                    select.innerHTML = '<option value="">All Courses</option>';
+                }
                 data.courses.forEach(course => {
                     const option = document.createElement('option');
                     option.value = course.id;
@@ -207,11 +217,16 @@ class UserDashboard {
 
     async loadUnits(courseId) {
         try {
-            const response = await fetch(`api/get-units.php?course_id=${courseId}`);
+            const url = (courseId && courseId !== '') ? `api/get-units.php?course_id=${courseId}` : 'api/get-units.php';
+            const response = await fetch(url);
             const data = await response.json();
 
             if (data.success) {
                 const select = document.getElementById('unitFilter');
+                // If loading all units on init, keep existing "All Units"
+                if (!courseId) {
+                    select.innerHTML = '<option value="">All Units</option>';
+                }
                 data.units.forEach(unit => {
                     const option = document.createElement('option');
                     option.value = unit.id;
@@ -221,6 +236,20 @@ class UserDashboard {
             }
         } catch (error) {
             console.error('Error loading units:', error);
+        }
+    }
+
+    populateYearOptions() {
+        const select = document.getElementById('yearFilter');
+        // Keep the default "All Years" option
+        select.innerHTML = '<option value="">All Years</option>';
+        const current = new Date().getFullYear();
+        const start = 2015; // adjust as needed
+        for (let y = current + 1; y >= start; y--) {
+            const opt = document.createElement('option');
+            opt.value = String(y);
+            opt.textContent = String(y);
+            select.appendChild(opt);
         }
     }
 
