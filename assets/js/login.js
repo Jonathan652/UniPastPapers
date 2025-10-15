@@ -68,7 +68,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const password = formData.get('password');
         const role = formData.get('role');
 
-        console.log('Login attempt:', { username, password, role });
+        console.log('Login attempt:', {
+            username,
+            password,
+            role
+        });
 
         if (!username || !password || !role) {
             showError('Please fill in all fields');
@@ -123,7 +127,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const confirmPassword = formData.get('reg_confirm_password');
         const role = formData.get('role');
 
-        console.log('Register attempt:', { fullName, email, username, password, confirmPassword, role });
+        console.log('Register attempt:', {
+            fullName,
+            email,
+            username,
+            password,
+            confirmPassword,
+            role
+        });
 
         // Client-side validation
         if (!fullName || !email || !username || !password || !confirmPassword || !role) {

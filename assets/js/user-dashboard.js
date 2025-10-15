@@ -303,8 +303,10 @@ class UserDashboard {
             const data = await response.json();
 
             if (data.success) {
-                // Open download in new tab
-                window.open(data.file_path, '_blank');
+                // Always use secure streaming endpoint if provided
+                const url = data.file_url || data.file_path || `api/serve-file.php?paper_id=${paperId}`;
+                // Navigate in the same tab to guarantee session cookies are sent
+                window.location.href = url;
 
                 // Refresh papers to show updated download count
                 this.loadPapers();

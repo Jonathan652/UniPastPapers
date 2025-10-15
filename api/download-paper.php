@@ -39,34 +39,26 @@ try {
         ], 404);
     }
 
-    // Check if file exists
-    if (!file_exists($paper['file_path'])) {
+    // Resolve and ensure file exists
+    $resolvedPath = $paper['file_path'];
+    if ($resolvedPath && $resolvedPath[0] !== '/' && !preg_match('/^[A-Za-z]:\\\\/', $resolvedPath)) {
+        $resolvedPath = realpath(__DIR__ . '/../' . $resolvedPath) ?: __DIR__ . '/../' . $paper['file_path'];
+    }
+    if (!file_exists($resolvedPath)) {
         sendJSONResponse([
             'success' => false,
             'message' => 'File not found on server'
         ], 404);
     }
 
-    // Record download in history
-    $stmt = $conn->prepare("INSERT INTO download_history (user_id, paper_id, ip_address, user_agent) VALUES (?, ?, ?, ?)");
-    $stmt->execute([
-        $userId,
-        $paperId,
-        $_SERVER['REMOTE_ADDR'] ?? '',
-        $_SERVER['HTTP_USER_AGENT'] ?? ''
-    ]);
-
-    // Update download count
-    $stmt = $conn->prepare("UPDATE past_papers SET downloads = downloads + 1 WHERE id = ?");
-    $stmt->execute([$paperId]);
-
-    // Log activity
-    logActivity($userId, 'download', "Downloaded paper: {$paper['title']}");
+    // Do NOT log or increment here to avoid double counting; serve-file.php handles that
+    $serveUrl = 'api/serve-file.php?paper_id=' . $paperId;
 
     sendJSONResponse([
         'success' => true,
-        'file_path' => $paper['file_path'],
-        'file_name' => $paper['file_name']
+        'file_path' => $serveUrl,
+        'file_name' => $paper['file_name'],
+        'file_url' => $serveUrl
     ]);
 
 } catch (PDOException $e) {

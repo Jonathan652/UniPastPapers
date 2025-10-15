@@ -216,20 +216,20 @@ class AdminDashboard {
 
     // Faculty methods
     async loadFaculties() {
-        const container = document.getElementById('facultiesTable');
-        container.innerHTML = '<div class="loading-state"><i class="fas fa-spinner fa-spin"></i><p>Loading faculties...</p></div>';
+            const container = document.getElementById('facultiesTable');
+            container.innerHTML = '<div class="loading-state"><i class="fas fa-spinner fa-spin"></i><p>Loading faculties...</p></div>';
 
-        try {
-            const response = await fetch('api/get-faculties.php');
-            const data = await response.json();
+            try {
+                const response = await fetch('api/get-faculties.php');
+                const data = await response.json();
 
-            if (data.success) {
-                if (data.faculties.length === 0) {
-                    container.innerHTML = '<div class="loading-state"><i class="fas fa-university"></i><p>No faculties found</p></div>';
-                    return;
-                }
+                if (data.success) {
+                    if (data.faculties.length === 0) {
+                        container.innerHTML = '<div class="loading-state"><i class="fas fa-university"></i><p>No faculties found</p></div>';
+                        return;
+                    }
 
-                container.innerHTML = `
+                    container.innerHTML = `
                     <table>
                         <thead>
                             <tr>
@@ -705,27 +705,30 @@ class AdminDashboard {
     }
 
     async uploadPaper() {
-        const formData = new FormData(document.getElementById('uploadForm'));
+    const formData = new FormData(document.getElementById('uploadForm'));
+    
+    // Add the uploaded_by field (admin's user ID)
+    formData.append('uploaded_by', this.user.id);
 
-        try {
-            const response = await fetch('api/upload-paper.php', {
-                method: 'POST',
-                body: formData
-            });
+    try {
+        const response = await fetch('api/upload-paper.php', {
+            method: 'POST',
+            body: formData
+        });
 
-            const result = await response.json();
+        const result = await response.json();
 
-            if (result.success) {
-                document.getElementById('uploadForm').reset();
-                this.showNotification('Paper uploaded successfully!', 'success');
-            } else {
-                this.showNotification(result.message, 'error');
-            }
-        } catch (error) {
-            this.showNotification('Error uploading paper', 'error');
-            console.error('Error:', error);
+        if (result.success) {
+            document.getElementById('uploadForm').reset();
+            this.showNotification('Paper uploaded successfully!', 'success');
+        } else {
+            this.showNotification(result.message, 'error');
         }
+    } catch (error) {
+        this.showNotification('Error uploading paper', 'error');
+        console.error('Error:', error);
     }
+}
 
     // Modal methods
     showModal(modalId) {

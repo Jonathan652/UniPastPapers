@@ -103,8 +103,9 @@ try {
         ], 400);
     }
 
-    // Create upload directory if it doesn't exist
-    $uploadDir = UPLOAD_DIR;
+    // Create upload directory if it doesn't exist (resolve relative to project root)
+    $projectRoot = realpath(__DIR__ . '/..');
+    $uploadDir = rtrim($projectRoot, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . rtrim(UPLOAD_DIR, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
     if (!file_exists($uploadDir)) {
         $dirCreated = mkdir($uploadDir, 0755, true);
         error_log("Upload directory creation: " . ($dirCreated ? 'SUCCESS' : 'FAILED') . " for path: " . $uploadDir);
@@ -120,7 +121,7 @@ try {
     }
 
     // Generate unique filename
-    $fileExtension = pathinfo($fileName, PATHINFO_EXTENSION);
+    $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
     $uniqueFileName = time() . '_' . uniqid() . '.' . $fileExtension;
     $filePath = $uploadDir . $uniqueFileName;
 
