@@ -216,20 +216,20 @@ class AdminDashboard {
 
     // Faculty methods
     async loadFaculties() {
-            const container = document.getElementById('facultiesTable');
-            container.innerHTML = '<div class="loading-state"><i class="fas fa-spinner fa-spin"></i><p>Loading faculties...</p></div>';
+        const container = document.getElementById('facultiesTable');
+        container.innerHTML = '<div class="loading-state"><i class="fas fa-spinner fa-spin"></i><p>Loading faculties...</p></div>';
 
-            try {
-                const response = await fetch('api/get-faculties.php');
-                const data = await response.json();
+        try {
+            const response = await fetch('api/get-faculties.php');
+            const data = await response.json();
 
-                if (data.success) {
-                    if (data.faculties.length === 0) {
-                        container.innerHTML = '<div class="loading-state"><i class="fas fa-university"></i><p>No faculties found</p></div>';
-                        return;
-                    }
+            if (data.success) {
+                if (data.faculties.length === 0) {
+                    container.innerHTML = '<div class="loading-state"><i class="fas fa-university"></i><p>No faculties found</p></div>';
+                    return;
+                }
 
-                    container.innerHTML = `
+                container.innerHTML = `
                     <table>
                         <thead>
                             <tr>
@@ -695,7 +695,7 @@ class AdminDashboard {
                 data.units.forEach(unit => {
                     const option = document.createElement('option');
                     option.value = unit.id;
-                    option.textContent = `${unit.name} (${unit.code})`;
+                    option.textContent = unit.course_name ? `${unit.name} (${unit.course_name})` : `${unit.name} (${unit.code})`;
                     select.appendChild(option);
                 });
             }
@@ -705,30 +705,30 @@ class AdminDashboard {
     }
 
     async uploadPaper() {
-    const formData = new FormData(document.getElementById('uploadForm'));
-    
-    // Add the uploaded_by field (admin's user ID)
-    formData.append('uploaded_by', this.user.id);
+        const formData = new FormData(document.getElementById('uploadForm'));
 
-    try {
-        const response = await fetch('api/upload-paper.php', {
-            method: 'POST',
-            body: formData
-        });
+        // Add the uploaded_by field (admin's user ID)
+        formData.append('uploaded_by', this.user.id);
 
-        const result = await response.json();
+        try {
+            const response = await fetch('api/upload-paper.php', {
+                method: 'POST',
+                body: formData
+            });
 
-        if (result.success) {
-            document.getElementById('uploadForm').reset();
-            this.showNotification('Paper uploaded successfully!', 'success');
-        } else {
-            this.showNotification(result.message, 'error');
+            const result = await response.json();
+
+            if (result.success) {
+                document.getElementById('uploadForm').reset();
+                this.showNotification('Paper uploaded successfully!', 'success');
+            } else {
+                this.showNotification(result.message, 'error');
+            }
+        } catch (error) {
+            this.showNotification('Error uploading paper', 'error');
+            console.error('Error:', error);
         }
-    } catch (error) {
-        this.showNotification('Error uploading paper', 'error');
-        console.error('Error:', error);
     }
-}
 
     // Modal methods
     showModal(modalId) {

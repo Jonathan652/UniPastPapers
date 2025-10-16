@@ -230,7 +230,7 @@ class UserDashboard {
                 data.units.forEach(unit => {
                     const option = document.createElement('option');
                     option.value = unit.id;
-                    option.textContent = unit.name;
+                    option.textContent = unit.course_name ? `${unit.name} (${unit.course_name})` : unit.name;
                     select.appendChild(option);
                 });
             }

@@ -954,3 +954,18 @@ form label.required::after {
         padding: 15px;
     }
 }
+
+/* Footer */
+.main-footer {
+    background: rgba(15, 15, 30, 0.95);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 15px 20px;
+    text-align: center;
+    margin-top: auto;
+}
+
+.footer-content p {
+    color: #94a3b8;
+    font-size: 0.85rem;
+    margin: 0;
+}

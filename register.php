@@ -32,7 +32,8 @@ $email = sanitizeInput($input['email']);
 $username = sanitizeInput($input['username']);
 $password = $input['password'];
 $confirmPassword = $input['confirm_password'];
-$role = ($input['role'] === 'admin') ? 'admin' : 'user';
+// Force all registrations to be regular users only
+$role = 'user';
 
 // Validate email format
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {

@@ -628,27 +628,35 @@ body {
         transform: translateX(-100%);
         width: 100%;
     }
+
     .sidebar.open {
         transform: translateX(0);
     }
+
     .main-content {
         margin-left: 0;
     }
+
     .topbar {
         padding: 15px 20px;
     }
+
     .page {
         padding: 20px;
     }
+
     .filters-grid {
         grid-template-columns: 1fr;
     }
+
     .papers-grid {
         grid-template-columns: 1fr;
     }
+
     .profile-content {
         grid-template-columns: 1fr;
     }
+
     .profile-stats {
         grid-template-columns: 1fr;
     }
@@ -660,15 +668,33 @@ body {
         gap: 15px;
         text-align: center;
     }
+
     .user-info {
         justify-content: center;
     }
+
     .filters-section,
     .papers-section,
     .downloads-content {
         padding: 20px;
     }
+
     .paper-card {
         padding: 15px;
     }
+}
+
+/* Footer */
+.main-footer {
+    background: rgba(15, 15, 30, 0.95);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 15px 20px;
+    text-align: center;
+    margin-top: auto;
+}
+
+.footer-content p {
+    color: #94a3b8;
+    font-size: 0.85rem;
+    margin: 0;
 }

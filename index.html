@@ -60,9 +60,9 @@
                             <label for="loginRole">Login as</label>
                             <div class="input-group">
                                 <select id="loginRole" name="role" required>
-                                        <option value="user">User</option>
-                                        <option value="admin">Administrator</option>
-                                    </select>
+                                    <option value="user">User</option>
+                                    <option value="admin">Administrator</option>
+                                </select>
                             </div>
                         </div>
 
@@ -89,15 +89,7 @@
 
                     <!-- Register Form -->
                     <div id="registerForm" class="form-section">
-                        <div class="form-group">
-                            <label for="registerRole">Register as</label>
-                            <div class="input-group">
-                                <select id="registerRole" name="role">
-                                    <option value="user">User</option>
-                                    <option value="admin">Administrator</option>
-                                </select>
-                            </div>
-                        </div>
+                        <input type="hidden" id="registerRole" name="role" value="user">
                         <div class="form-group">
                             <label for="regFullName">Full Name</label>
                             <div class="input-group">
@@ -155,18 +147,16 @@
                     </div>
                 </form>
 
-                <div class="demo-credentials">
-                    <h4>Demo Credentials</h4>
-                    <div class="demo-item">
-                        <strong>Admin:</strong> admin / admin123
-                    </div>
-                    <div class="demo-item">
-                        <strong>User:</strong> student / user123
-                    </div>
-                </div>
             </div>
         </div>
     </div>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-content">
+            <p>&copy; 2025 University Past Papers Portal - Group H. All rights reserved.</p>
+        </div>
+    </footer>
 
     <script src="assets/js/login.js"></script>
 </body>
