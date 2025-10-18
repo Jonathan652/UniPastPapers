@@ -282,18 +282,22 @@ class AdminDashboard {
 
     async saveFaculty() {
         const formData = new FormData(document.getElementById('facultyForm'));
+        const editId = document.getElementById('facultyForm').dataset.editId;
         const data = {
             name: formData.get('name'),
             code: formData.get('code'),
             description: formData.get('description')
         };
 
+        if (editId) {
+            data.id = editId;
+        }
+
         try {
-            const url = this.currentEditId ? `api/update-faculty.php?id=${this.currentEditId}` : 'api/add-faculty.php';
-            const method = this.currentEditId ? 'PUT' : 'POST';
+            const url = editId ? 'api/edit-faculty.php' : 'api/add-faculty.php';
 
             const response = await fetch(url, {
-                method: method,
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -303,28 +307,65 @@ class AdminDashboard {
             const result = await response.json();
 
             if (result.success) {
-                this.closeModal('facultyModal');
+                document.getElementById('facultyModal').style.display = 'none';
                 this.loadFaculties();
-                this.showNotification('Faculty saved successfully!', 'success');
+                alert('Faculty saved successfully!');
             } else {
-                this.showNotification(result.message, 'error');
+                alert(result.message);
             }
         } catch (error) {
-            this.showNotification('Error saving faculty', 'error');
+            alert('Error saving faculty');
             console.error('Error:', error);
         }
     }
 
     editFaculty(id) {
-        // This would fetch faculty data and open modal
-        // For now, we'll just show an alert
-        alert(`Edit faculty with ID: ${id}`);
+        // Get faculty data and populate modal
+        fetch('api/get-faculties.php')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const faculty = data.faculties.find(f => f.id == id);
+                    if (faculty) {
+                        document.getElementById('facultyName').value = faculty.name;
+                        document.getElementById('facultyCode').value = faculty.code;
+                        document.getElementById('facultyDescription').value = faculty.description || '';
+                        document.getElementById('facultyModalTitle').textContent = 'Edit Faculty';
+                        document.getElementById('facultyForm').dataset.editId = id;
+                        document.getElementById('facultyModal').style.display = 'block';
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error loading faculty data');
+            });
     }
 
     deleteFaculty(id) {
         if (confirm('Are you sure you want to delete this faculty?')) {
-            // This would delete the faculty
-            alert(`Delete faculty with ID: ${id}`);
+            fetch('api/delete-faculty.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        id: id
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Faculty deleted successfully!');
+                        this.loadFaculties();
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error deleting faculty');
+                });
         }
     }
 
@@ -397,6 +438,7 @@ class AdminDashboard {
 
     async saveCourse() {
         const formData = new FormData(document.getElementById('courseForm'));
+        const editId = document.getElementById('courseForm').dataset.editId;
         const data = {
             faculty_id: formData.get('faculty_id'),
             name: formData.get('name'),
@@ -404,12 +446,15 @@ class AdminDashboard {
             description: formData.get('description')
         };
 
+        if (editId) {
+            data.id = editId;
+        }
+
         try {
-            const url = this.currentEditId ? `api/update-course.php?id=${this.currentEditId}` : 'api/add-course.php';
-            const method = this.currentEditId ? 'PUT' : 'POST';
+            const url = editId ? 'api/edit-course.php' : 'api/add-course.php';
 
             const response = await fetch(url, {
-                method: method,
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -419,25 +464,75 @@ class AdminDashboard {
             const result = await response.json();
 
             if (result.success) {
-                this.closeModal('courseModal');
+                document.getElementById('courseModal').style.display = 'none';
                 this.loadCourses();
-                this.showNotification('Course saved successfully!', 'success');
+                alert('Course saved successfully!');
             } else {
-                this.showNotification(result.message, 'error');
+                alert(result.message);
             }
         } catch (error) {
-            this.showNotification('Error saving course', 'error');
+            alert('Error saving course');
             console.error('Error:', error);
         }
     }
 
     editCourse(id) {
-        alert(`Edit course with ID: ${id}`);
+        // Get course data and populate modal
+        fetch('api/get-courses.php')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const course = data.courses.find(c => c.id == id);
+                    if (course) {
+                        document.getElementById('courseName').value = course.name;
+                        document.getElementById('courseCode').value = course.code;
+                        document.getElementById('courseDescription').value = course.description || '';
+                        document.getElementById('courseModalTitle').textContent = 'Edit Course';
+                        document.getElementById('courseForm').dataset.editId = id;
+
+                        // Set faculty selection
+                        const facultySelect = document.getElementById('courseFaculty');
+                        for (let option of facultySelect.options) {
+                            if (option.value == course.faculty_id) {
+                                option.selected = true;
+                                break;
+                            }
+                        }
+
+                        document.getElementById('courseModal').style.display = 'block';
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error loading course data');
+            });
     }
 
     deleteCourse(id) {
         if (confirm('Are you sure you want to delete this course?')) {
-            alert(`Delete course with ID: ${id}`);
+            fetch('api/delete-course.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        id: id
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Course deleted successfully!');
+                        this.loadCourses();
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error deleting course');
+                });
         }
     }
 
@@ -510,6 +605,7 @@ class AdminDashboard {
 
     async saveUnit() {
         const formData = new FormData(document.getElementById('unitForm'));
+        const editId = document.getElementById('unitForm').dataset.editId;
         const data = {
             course_id: formData.get('course_id'),
             name: formData.get('name'),
@@ -517,12 +613,15 @@ class AdminDashboard {
             description: formData.get('description')
         };
 
+        if (editId) {
+            data.id = editId;
+        }
+
         try {
-            const url = this.currentEditId ? `api/update-unit.php?id=${this.currentEditId}` : 'api/add-unit.php';
-            const method = this.currentEditId ? 'PUT' : 'POST';
+            const url = editId ? 'api/edit-unit.php' : 'api/add-unit.php';
 
             const response = await fetch(url, {
-                method: method,
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -532,25 +631,75 @@ class AdminDashboard {
             const result = await response.json();
 
             if (result.success) {
-                this.closeModal('unitModal');
+                document.getElementById('unitModal').style.display = 'none';
                 this.loadUnits();
-                this.showNotification('Unit saved successfully!', 'success');
+                alert('Unit saved successfully!');
             } else {
-                this.showNotification(result.message, 'error');
+                alert(result.message);
             }
         } catch (error) {
-            this.showNotification('Error saving unit', 'error');
+            alert('Error saving unit');
             console.error('Error:', error);
         }
     }
 
     editUnit(id) {
-        alert(`Edit unit with ID: ${id}`);
+        // Get unit data and populate modal
+        fetch('api/get-units.php')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const unit = data.units.find(u => u.id == id);
+                    if (unit) {
+                        document.getElementById('unitName').value = unit.name;
+                        document.getElementById('unitCode').value = unit.code;
+                        document.getElementById('unitDescription').value = unit.description || '';
+                        document.getElementById('unitModalTitle').textContent = 'Edit Unit';
+                        document.getElementById('unitForm').dataset.editId = id;
+
+                        // Set course selection
+                        const courseSelect = document.getElementById('unitCourse');
+                        for (let option of courseSelect.options) {
+                            if (option.value == unit.course_id) {
+                                option.selected = true;
+                                break;
+                            }
+                        }
+
+                        document.getElementById('unitModal').style.display = 'block';
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error loading unit data');
+            });
     }
 
     deleteUnit(id) {
         if (confirm('Are you sure you want to delete this unit?')) {
-            alert(`Delete unit with ID: ${id}`);
+            fetch('api/delete-unit.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        id: id
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Unit deleted successfully!');
+                        this.loadUnits();
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error deleting unit');
+                });
         }
     }
 

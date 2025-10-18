@@ -8,10 +8,18 @@ $facultyId = isset($_GET['faculty_id']) ? (int)$_GET['faculty_id'] : 0;
 
 try {
     if ($facultyId > 0) {
-        $stmt = $conn->prepare("SELECT id, name, code, description FROM courses WHERE faculty_id = ? AND is_active = 1 ORDER BY name");
+        $stmt = $conn->prepare("SELECT c.id, c.name, c.code, c.description, f.name as faculty_name 
+                               FROM courses c 
+                               JOIN faculties f ON c.faculty_id = f.id 
+                               WHERE c.faculty_id = ? AND c.is_active = 1 
+                               ORDER BY c.name");
         $stmt->execute([$facultyId]);
     } else {
-        $stmt = $conn->prepare("SELECT id, name, code, description FROM courses WHERE is_active = 1 ORDER BY name");
+        $stmt = $conn->prepare("SELECT c.id, c.name, c.code, c.description, f.name as faculty_name 
+                               FROM courses c 
+                               JOIN faculties f ON c.faculty_id = f.id 
+                               WHERE c.is_active = 1 
+                               ORDER BY f.name, c.name");
         $stmt->execute();
     }
     
