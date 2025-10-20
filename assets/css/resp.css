@@ -1,0 +1,938 @@
+/* Enhanced Responsive Design for University Past Papers Portal */
+
+/* Mobile Navigation Toggle */
+.mobile-nav-toggle {
+    display: none;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 2001;
+    background: linear-gradient(135deg, #e94560 0%, #d63451 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(233, 69, 96, 0.3);
+    transition: all 0.3s ease;
+}
+
+.mobile-nav-toggle:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(233, 69, 96, 0.4);
+}
+
+/* Sidebar Overlay for Mobile */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    backdrop-filter: blur(5px);
+}
+
+.sidebar-overlay.active {
+    display: block;
+}
+
+/* Enhanced Mobile Breakpoints */
+@media (max-width: 1200px) {
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+    }
+    
+    .filters-grid {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 15px;
+    }
+    
+    .papers-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 15px;
+    }
+}
+
+@media (max-width: 992px) {
+    .mobile-nav-toggle {
+        display: block;
+    }
+    
+    .sidebar {
+        transform: translateX(-100%);
+        width: 300px;
+        z-index: 1000;
+    }
+    
+    .sidebar.open {
+        transform: translateX(0);
+    }
+    
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+    }
+    
+    .topbar {
+        padding-left: 70px;
+    }
+    
+    .page {
+        padding: 20px 15px;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 12px;
+    }
+    
+    .stat-card {
+        padding: 20px 15px;
+    }
+    
+    .stat-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+    
+    .stat-content h3,
+    .stat-content h4 {
+        font-size: 1.2rem;
+    }
+    
+    .profile-content {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .profile-stats {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .topbar {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+        padding: 15px 70px 15px 15px;
+    }
+    
+    .topbar-left h1 {
+        font-size: 1.5rem;
+    }
+    
+    .topbar-left p {
+        font-size: 0.9rem;
+    }
+    
+    .user-info {
+        justify-content: center;
+    }
+    
+    .page-header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+    
+    .page-header h2 {
+        font-size: 1.5rem;
+    }
+    
+    .header-actions {
+        justify-content: center;
+    }
+    
+    .filters-section,
+    .papers-section,
+    .downloads-content,
+    .content-card,
+    .recent-activity {
+        padding: 20px 15px;
+        margin-bottom: 20px;
+    }
+    
+    .filters-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .papers-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .paper-card {
+        padding: 15px;
+    }
+    
+    .paper-title {
+        font-size: 1rem;
+    }
+    
+    .paper-details {
+        font-size: 0.85rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 10px;
+    }
+    
+    .stat-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+        padding: 15px;
+    }
+    
+    .stat-icon {
+        width: 35px;
+        height: 35px;
+        font-size: 1rem;
+        margin: 0 auto;
+    }
+    
+    /* Enhanced Table Responsiveness */
+    .data-table {
+        font-size: 0.85rem;
+    }
+    
+    .data-table table {
+        min-width: 600px;
+    }
+    
+    .data-table th,
+    .data-table td {
+        padding: 10px 8px;
+        white-space: nowrap;
+    }
+    
+    .downloads-table table {
+        min-width: 500px;
+    }
+    
+    /* Form Improvements */
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .form-actions button {
+        width: 100%;
+    }
+    
+    /* Modal Improvements */
+    .modal-content {
+        width: 95%;
+        margin: 10% auto;
+        max-height: 85vh;
+    }
+    
+    .modal-header {
+        padding: 20px 15px;
+    }
+    
+    .modal-body {
+        padding: 20px 15px;
+    }
+}
+
+@media (max-width: 576px) {
+    .mobile-nav-toggle {
+        top: 15px;
+        left: 15px;
+        padding: 10px;
+        font-size: 1rem;
+    }
+    
+    .topbar {
+        padding: 15px;
+    }
+    
+    .topbar-left h1 {
+        font-size: 1.3rem;
+    }
+    
+    .user-avatar {
+        width: 35px;
+        height: 35px;
+        font-size: 1rem;
+    }
+    
+    .user-name {
+        font-size: 0.85rem;
+    }
+    
+    .user-role {
+        font-size: 0.75rem;
+    }
+    
+    .page {
+        padding: 15px 10px;
+    }
+    
+    .page-header h2 {
+        font-size: 1.3rem;
+    }
+    
+    .filters-section,
+    .papers-section,
+    .downloads-content,
+    .content-card,
+    .recent-activity {
+        padding: 15px 10px;
+        border-radius: 8px;
+    }
+    
+    .filters-header h3,
+    .papers-header h3 {
+        font-size: 1.1rem;
+    }
+    
+    .clear-filters-btn {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+    }
+    
+    .filter-select {
+        padding: 10px 12px;
+        font-size: 0.9rem;
+    }
+    
+    .paper-card {
+        padding: 12px;
+    }
+    
+    .paper-title {
+        font-size: 0.95rem;
+        line-height: 1.3;
+    }
+    
+    .paper-details {
+        font-size: 0.8rem;
+        margin-bottom: 6px;
+    }
+    
+    .paper-footer {
+        margin-top: 12px;
+        padding-top: 12px;
+    }
+    
+    .download-btn {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+    }
+    
+    .download-count {
+        font-size: 0.75rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+    
+    .stat-card {
+        padding: 12px;
+        gap: 8px;
+    }
+    
+    .stat-content h3,
+    .stat-content h4 {
+        font-size: 1.1rem;
+    }
+    
+    .stat-content p {
+        font-size: 0.8rem;
+    }
+    
+    /* Enhanced Form Responsiveness */
+    form {
+        padding: 20px 15px;
+    }
+    
+    form input,
+    form select,
+    form textarea {
+        padding: 10px 12px;
+        font-size: 0.9rem;
+    }
+    
+    form label {
+        font-size: 0.85rem;
+    }
+    
+    .file-upload-display {
+        padding: 30px 20px;
+    }
+    
+    .file-upload-display i {
+        font-size: 2rem;
+    }
+    
+    .file-upload-display span {
+        font-size: 0.85rem;
+    }
+    
+    /* Profile Improvements */
+    .profile-card {
+        padding: 20px 15px;
+    }
+    
+    .avatar-large {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+    }
+    
+    .profile-field {
+        margin-bottom: 15px;
+        padding-bottom: 12px;
+    }
+    
+    .profile-field label {
+        font-size: 0.8rem;
+    }
+    
+    .profile-field span {
+        font-size: 0.85rem;
+    }
+    
+    .profile-stats {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    
+    /* Activity List */
+    .activity-item {
+        padding: 12px;
+    }
+    
+    .activity-item p {
+        font-size: 0.8rem;
+    }
+    
+    .activity-item span {
+        font-size: 0.75rem;
+    }
+    
+    /* Loading States */
+    .loading-state {
+        padding: 30px 15px;
+    }
+    
+    .loading-state i {
+        font-size: 1.5rem;
+    }
+    
+    .loading-state p {
+        font-size: 0.9rem;
+    }
+}
+
+/* Landscape Phone Orientation */
+@media (max-width: 768px) and (orientation: landscape) {
+    .topbar {
+        flex-direction: row;
+        padding: 10px 70px 10px 15px;
+    }
+    
+    .topbar-left h1 {
+        font-size: 1.2rem;
+    }
+    
+    .user-info {
+        justify-content: flex-end;
+    }
+    
+    .page {
+        padding: 15px;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    }
+    
+    .stat-card {
+        flex-direction: row;
+        text-align: left;
+        gap: 15px;
+    }
+}
+
+/* Touch-friendly Improvements */
+@media (hover: none) and (pointer: coarse) {
+    .nav-link,
+    .btn,
+    .download-btn,
+    .clear-filters-btn,
+    .logout-btn {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .paper-card {
+        cursor: pointer;
+        -webkit-tap-highlight-color: rgba(233, 69, 96, 0.2);
+    }
+    
+    .filter-select {
+        min-height: 44px;
+    }
+    
+    .modal-close {
+        min-width: 44px;
+        min-height: 44px;
+    }
+}
+
+/* High DPI Displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .stat-icon,
+    .user-avatar,
+    .avatar-large {
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+    }
+}
+
+/* Reduced Motion Preferences */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Dark Mode Support Enhancement */
+@media (prefers-color-scheme: dark) {
+    /* Already using dark theme, but ensure consistency */
+    .sidebar,
+    .main-content,
+    .topbar,
+    .content-card,
+    .filters-section,
+    .papers-section {
+        color-scheme: dark;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .sidebar,
+    .mobile-nav-toggle,
+    .sidebar-overlay,
+    .main-footer {
+        display: none !important;
+    }
+    
+    .main-content {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+    
+    .page {
+        padding: 0 !important;
+    }
+    
+    .paper-card,
+    .stat-card,
+    .content-card {
+        break-inside: avoid;
+        box-shadow: none !important;
+        border: 1px solid #ccc !important;
+    }
+}
+
+/* Enhanced Table Responsiveness */
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 768px) {
+    /* Stack table cells vertically on mobile */
+    .data-table table,
+    .downloads-table table {
+        border: 0;
+    }
+    
+    .data-table table thead {
+        border: none;
+        clip: rect(0 0 0 0);
+        height: 1px;
+        margin: -1px;
+        overflow: hidden;
+        padding: 0;
+        position: absolute;
+        width: 1px;
+    }
+    
+    .data-table table tr,
+    .downloads-table table tr {
+        border-bottom: 3px solid rgba(255, 255, 255, 0.1);
+        display: block;
+        margin-bottom: 15px;
+        padding: 15px;
+        background: rgba(255, 255, 255, 0.02);
+        border-radius: 8px;
+    }
+    
+    .data-table table td,
+    .downloads-table table td {
+        border: none;
+        display: block;
+        font-size: 0.9rem;
+        text-align: right;
+        padding: 8px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .data-table table td:last-child,
+    .downloads-table table td:last-child {
+        border-bottom: none;
+    }
+    
+    .data-table table td:before,
+    .downloads-table table td:before {
+        content: attr(data-label) ": ";
+        float: left;
+        font-weight: 600;
+        color: #e94560;
+        width: 50%;
+        text-align: left;
+    }
+    
+    /* Action buttons in tables */
+    .data-table .action-btns {
+        justify-content: flex-end;
+        margin-top: 10px;
+    }
+    
+    .data-table .btn-icon {
+        margin-left: 5px;
+        padding: 8px 12px;
+        font-size: 0.8rem;
+    }
+}
+
+/* Form Grid Enhancements */
+@media (max-width: 768px) {
+    .form-grid {
+        display: block;
+    }
+    
+    .form-group.full-width {
+        grid-column: 1;
+    }
+    
+    .file-upload {
+        position: relative;
+    }
+    
+    .file-upload input[type="file"] {
+        position: absolute;
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+    }
+    
+    .file-upload-display {
+        border: 2px dashed rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        padding: 40px 20px;
+        text-align: center;
+        background: rgba(255, 255, 255, 0.03);
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .file-upload-display:hover {
+        border-color: rgba(233, 69, 96, 0.5);
+        background: rgba(255, 255, 255, 0.05);
+    }
+}
+
+/* Enhanced Modal Responsiveness */
+@media (max-width: 576px) {
+    .modal-content {
+        width: 98%;
+        margin: 5% auto;
+        max-height: 90vh;
+        border-radius: 8px;
+    }
+    
+    .modal-header {
+        padding: 15px;
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+    
+    .modal-header h3 {
+        font-size: 1.1rem;
+    }
+    
+    .modal-close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+    }
+    
+    .modal-body {
+        padding: 15px;
+    }
+    
+    .modal-body form {
+        padding: 0;
+    }
+}
+
+/* Improved Button Responsiveness */
+@media (max-width: 576px) {
+    .btn {
+        padding: 12px 16px;
+        font-size: 0.9rem;
+        border-radius: 6px;
+    }
+    
+    .btn i {
+        margin-right: 6px;
+    }
+    
+    .btn-icon {
+        padding: 8px 10px;
+        font-size: 0.8rem;
+    }
+    
+    .header-actions {
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+    }
+    
+    .header-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Enhanced Loading States */
+@media (max-width: 576px) {
+    .loading-state {
+        padding: 20px 10px;
+    }
+    
+    .loading-state i {
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+    }
+    
+    .loading-state p {
+        font-size: 0.85rem;
+        margin: 0;
+    }
+}
+
+/* Accessibility Improvements */
+@media (prefers-reduced-motion: reduce) {
+    .sidebar,
+    .modal,
+    .paper-card,
+    .stat-card,
+    .feature {
+        transition: none !important;
+    }
+    
+    .loading-state i {
+        animation: none !important;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .sidebar,
+    .topbar,
+    .content-card,
+    .paper-card,
+    .stat-card {
+        border: 2px solid #fff;
+    }
+    
+    .btn-primary {
+        border: 2px solid #fff;
+    }
+    
+    .nav-link.active {
+        border-left-width: 5px;
+    }
+}
+
+/* Focus improvements for keyboard navigation */
+.nav-link:focus,
+.btn:focus,
+.filter-select:focus,
+.modal-close:focus {
+    outline: 2px solid #e94560;
+    outline-offset: 2px;
+}
+
+/* Improved touch targets */
+@media (hover: none) and (pointer: coarse) {
+    .nav-link {
+        padding: 18px 25px;
+    }
+    
+    .btn,
+    .download-btn,
+    .clear-filters-btn {
+        min-height: 48px;
+        padding: 12px 20px;
+    }
+    
+    .filter-select {
+        min-height: 48px;
+        padding: 12px 15px;
+    }
+    
+    .toggle-password {
+        min-width: 48px;
+        min-height: 48px;
+    }
+    
+    .modal-close {
+        min-width: 48px;
+        min-height: 48px;
+    }
+}/* File 
+Upload Improvements */
+.file-info {
+    display: block;
+    margin-top: 8px;
+    font-size: 0.8rem;
+    color: #94a3b8;
+    font-style: italic;
+}
+
+@media (max-width: 576px) {
+    .file-info {
+        font-size: 0.75rem;
+        margin-top: 6px;
+    }
+}
+
+/* Input validation styles */
+input:invalid,
+select:invalid {
+    border-color: rgba(239, 68, 68, 0.5);
+}
+
+input:valid,
+select:valid {
+    border-color: rgba(34, 197, 94, 0.3);
+}
+
+/* Better focus states for mobile */
+@media (hover: none) and (pointer: coarse) {
+    input:focus,
+    select:focus,
+    textarea:focus {
+        border-color: #e94560;
+        box-shadow: 0 0 0 3px rgba(233, 69, 96, 0.2);
+        transform: scale(1.02);
+    }
+}
+
+/* Improved scrollbar for mobile */
+@media (max-width: 768px) {
+    .table-responsive::-webkit-scrollbar {
+        height: 8px;
+    }
+    
+    .table-responsive::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+    }
+    
+    .table-responsive::-webkit-scrollbar-thumb {
+        background: rgba(233, 69, 96, 0.5);
+        border-radius: 4px;
+    }
+    
+    .table-responsive::-webkit-scrollbar-thumb:hover {
+        background: rgba(233, 69, 96, 0.7);
+    }
+}
+
+/* Safe area insets for devices with notches */
+@supports (padding: max(0px)) {
+    .topbar {
+        padding-left: max(20px, env(safe-area-inset-left));
+        padding-right: max(20px, env(safe-area-inset-right));
+    }
+    
+    .mobile-nav-toggle {
+        left: max(20px, env(safe-area-inset-left));
+    }
+    
+    .main-footer {
+        padding-bottom: max(15px, env(safe-area-inset-bottom));
+    }
+}
+
+/* Improved animation performance */
+.sidebar,
+.modal,
+.paper-card,
+.stat-card {
+    will-change: transform;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translate3d(-100%, 0, 0);
+    }
+    
+    .sidebar.open {
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+/* Better text readability on small screens */
+@media (max-width: 480px) {
+    body {
+        font-size: 14px;
+        line-height: 1.5;
+    }
+    
+    h1, h2, h3, h4, h5, h6 {
+        line-height: 1.3;
+    }
+    
+    .paper-title,
+    .stat-content h3,
+    .stat-content h4 {
+        line-height: 1.2;
+    }
+}

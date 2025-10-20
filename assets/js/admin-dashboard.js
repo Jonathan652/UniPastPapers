@@ -1,4 +1,5 @@
 // Admin Dashboard JavaScript
+
 class AdminDashboard {
     constructor() {
         this.user = null;
@@ -44,9 +45,48 @@ class AdminDashboard {
     }
 
     setupNavigation() {
+        // Mobile navigation toggle
+        const mobileNavToggle = document.getElementById('mobileNavToggle');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+        if (mobileNavToggle) {
+            mobileNavToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('open');
+                sidebarOverlay.classList.toggle('active');
+                
+                // Update toggle icon
+                const icon = mobileNavToggle.querySelector('i');
+                if (sidebar.classList.contains('open')) {
+                    icon.className = 'fas fa-times';
+                } else {
+                    icon.className = 'fas fa-bars';
+                }
+            });
+        }
+
+        // Close sidebar when overlay is clicked
+        if (sidebarOverlay) {
+            sidebarOverlay.addEventListener('click', () => {
+                sidebar.classList.remove('open');
+                sidebarOverlay.classList.remove('active');
+                const icon = mobileNavToggle.querySelector('i');
+                icon.className = 'fas fa-bars';
+            });
+        }
+
+        // Close sidebar when nav link is clicked on mobile
         document.querySelectorAll('.nav-link').forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
+                
+                // Close mobile menu if open
+                if (window.innerWidth <= 992) {
+                    sidebar.classList.remove('open');
+                    sidebarOverlay.classList.remove('active');
+                    const icon = mobileNavToggle.querySelector('i');
+                    icon.className = 'fas fa-bars';
+                }
                 const page = link.dataset.page;
                 this.showPage(page);
             });
@@ -216,20 +256,20 @@ class AdminDashboard {
 
     // Faculty methods
     async loadFaculties() {
-        const container = document.getElementById('facultiesTable');
-        container.innerHTML = '<div class="loading-state"><i class="fas fa-spinner fa-spin"></i><p>Loading faculties...</p></div>';
+            const container = document.getElementById('facultiesTable');
+            container.innerHTML = '<div class="loading-state"><i class="fas fa-spinner fa-spin"></i><p>Loading faculties...</p></div>';
 
-        try {
-            const response = await fetch('api/get-faculties.php');
-            const data = await response.json();
+            try {
+                const response = await fetch('api/get-faculties.php');
+                const data = await response.json();
 
-            if (data.success) {
-                if (data.faculties.length === 0) {
-                    container.innerHTML = '<div class="loading-state"><i class="fas fa-university"></i><p>No faculties found</p></div>';
-                    return;
-                }
+                if (data.success) {
+                    if (data.faculties.length === 0) {
+                        container.innerHTML = '<div class="loading-state"><i class="fas fa-university"></i><p>No faculties found</p></div>';
+                        return;
+                    }
 
-                container.innerHTML = `
+                    container.innerHTML = `
                     <table>
                         <thead>
                             <tr>
@@ -917,9 +957,59 @@ class AdminDashboard {
             setTimeout(() => notification.remove(), 300);
         }, 3000);
     }
+
+    // Responsive utilities
+    makeTableResponsive(tableContainer) {
+        if (!tableContainer) return;
+        
+        const table = tableContainer.querySelector('table');
+        if (!table) return;
+        
+        // Add responsive wrapper if not exists
+        if (!table.parentElement.classList.contains('table-responsive')) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'table-responsive';
+            table.parentElement.insertBefore(wrapper, table);
+            wrapper.appendChild(table);
+        }
+        
+        // Add mobile-friendly attributes
+        const headers = table.querySelectorAll('th');
+        const rows = table.querySelectorAll('tbody tr');
+        
+        rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            cells.forEach((cell, index) => {
+                if (headers[index]) {
+                    cell.setAttribute('data-label', headers[index].textContent);
+                }
+            });
+        });
+    }
+
+    // Handle window resize
+    handleResize() {
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const mobileNavToggle = document.getElementById('mobileNavToggle');
+        
+        if (window.innerWidth > 992) {
+            sidebar.classList.remove('open');
+            sidebarOverlay.classList.remove('active');
+            if (mobileNavToggle) {
+                const icon = mobileNavToggle.querySelector('i');
+                icon.className = 'fas fa-bars';
+            }
+        }
+    }
 }
 
 // Initialize dashboard when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     window.adminDashboard = new AdminDashboard();
+    
+    // Handle window resize
+    window.addEventListener('resize', () => {
+        window.adminDashboard.handleResize();
+    });
 });

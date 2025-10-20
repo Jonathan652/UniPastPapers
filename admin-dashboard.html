@@ -6,13 +6,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - University Past Papers Portal</title>
     <link rel="stylesheet" href="assets/css/admin-dashboard.css">
+    <link rel="stylesheet" href="assets/css/resp.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 
 <body>
     <div class="dashboard-container">
+        <!-- Mobile Navigation Toggle -->
+        <button class="mobile-nav-toggle" id="mobileNavToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        
+        <!-- Sidebar Overlay -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+        
         <!-- Sidebar -->
-        <aside class="sidebar">
+        <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <div class="logo">
                     <i class="fas fa-cogs"></i>
@@ -276,7 +285,7 @@
 
                             <div class="form-group">
                                 <label for="uploadYear">Year *</label>
-                                <input type="number" id="uploadYear" name="year" placeholder="e.g., 2023" required>
+                                <input type="number" id="uploadYear" name="year" placeholder="e.g., 2023" min="2000" max="2030" required>
                             </div>
 
                             <div class="form-group">
@@ -298,6 +307,7 @@
                                     <div class="file-upload-display">
                                         <i class="fas fa-cloud-upload-alt"></i>
                                         <span>Choose PDF file or drag and drop</span>
+                                        <small class="file-info">Maximum file size: 10MB</small>
                                     </div>
                                 </div>
                             </div>
